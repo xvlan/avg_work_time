@@ -2,7 +2,7 @@
 
 import json
 import datetime
-
+import pytimeparse
 
 def get_time(date, start_time, finish_time):
     Y = int(date.split('-')[0])
@@ -29,12 +29,17 @@ def get_time(date, start_time, finish_time):
         total_time -= datetime.timedelta(hours=(2 + 0.5))
     return total_time
 
-def get_avg_time(time_list):
-    return 
+def get_avg_time(time_list, day_count):
+    seconds = 0
+    for time in time_list:
+        seconds += pytimeparse.parse(str(time))
+    print(seconds / 3600 / day_count)
+    return
 
 if __name__ == "__main__":
     fp = open('time.json', 'r', encoding='UTF-8')
     time_ori = json.load(fp)
+    time_list = []
 
     print("姓名\t\t\t日期\t\t\t\t上班时间\t\t下班时间\t\t当天工时")
     for line in time_ori.get('Rows'):
@@ -44,3 +49,6 @@ if __name__ == "__main__":
         print(line.get('showEndTime') + '\t\t', end='')
         day_time = get_time(line.get('showRecordDate'), line.get('showBeginTime'), line.get('showEndTime'))
         print(day_time)
+        time_list.append(day_time)
+
+    get_avg_time(time_list, len(time_ori.get('Rows')))
